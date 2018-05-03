@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>地图上显示标记-福州鼓楼</title>
+    <link rel="stylesheet" type="text/css" href="../ol.css" />
+    <link rel="icon" type="image/x-icon" href="http://openlayers.org/assets/theme/img/favicon.ico" />
+</head>
+
+<body>
+    <div id="map">
+        <div id="mouse-position"></div>
+    </div>
+</body>
+<script src="../ol.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script type="text/javascript">
+
+    /*********************显示地图**************************/
+
+    var pos = ol.proj.get('EPSG:3857');
+
+    var map = new ol.Map({
+        //地图容器div的ID
+        target: 'map',
+        //地图容器中加载的图层
+        layers: [],
+        view: new ol.View({
+            //设置地图投影坐标系
+            projection: pos,
+            center: [13276805.940731, 3008561.497087],
+            zoom: 19
+        }),
+    });
+
+    var mlayer = new ol.layer.Tile({
+        source: new ol.source.TileWMS({
+            url: 'http://map.landi.acmsmu.cn/geowebcache/service/wms',
+            params: {
+                'LAYERS': 'fzgl',
+                'FORMAT': 'image/png',
+                'SRS': 'EPSG:3857'
+            },
+            tileGrid: new ol.tilegrid.TileGrid({
+                resolutions: [156543.0339, 78271.51696, 39135.75848, 19567.87924, 9783.939621, 4891.96981, 2445.984905, 1222.992453, 611.496226, 305.748113, 152.874057, 76.437028, 38.218514, 19.109257, 9.554629, 4.777314, 2.388657, 1.194329, 0.597164, 0.298582],
+                origin: [-20037508.3427892, 20037508.3430388]
+            })
+        })
+    })
+
+    /*********************显示地标 随机产生 总数10个**************************/
+    var maxX = 13281566;
+    var minX = 13273419;
+
+    var maxY = 3008492;
+    var minY = 3008104;
+
+    //设置icon
+    //创建空的矢量容器
+    var vectorSource = new ol.source.Vector({});
+
+    for (var i = 1; i <= 10; i++) {
+        var t1 = Math.random() * (maxX - minX + 1) + minX;
+        var t2 = Math.random() * (maxY - minY + 1) + minY;
+        //创建图标特性
+        var iconFeature = new ol.Feature({
+            geometry: new ol.geom.Point([t1, t2], "XY"),
+            name: "my Icon",
+        });
+        //将图标特性添加进矢量中
+        vectorSource.addFeature(iconFeature);
+        //console.log(t1+" "+t2);
+    }
+
+    //创建图标样式
+    var iconStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+            opacity: 0.75,
+            src: "http://openlayers.org/en/v3.9.0/examples/data/icon.png"
+        }),
+    });
+    //创建图标层
+    var vectorLayer = new ol.layer.Vector({
+        source: vectorSource,
+        style: iconStyle
+    });
+
+
+    map.addLayer(mlayer);
+    map.addLayer(vectorLayer);
+</script>
+
+</html>

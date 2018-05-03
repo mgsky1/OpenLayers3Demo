@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>显示瓦片地图-福州鼓楼</title>
+    <link rel="stylesheet" type="text/css" href="../ol.css" />
+    <link rel="icon" type="image/x-icon" href="http://openlayers.org/assets/theme/img/favicon.ico" />
+</head>
+
+<body>
+    <div id="map">
+        <div id="mouse-position"></div>
+    </div>
+</body>
+<script src="../ol.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script type="text/javascript">
+
+    /*********************显示地图**************************/
+
+    var pos = ol.proj.get('EPSG:3857');
+
+    var map = new ol.Map({
+        //地图容器div的ID
+        target: 'map',
+        //地图容器中加载的图层
+        layers: [],
+        view: new ol.View({
+            //设置地图投影坐标系
+            projection: pos,
+            center: [13276805.940731, 3008561.497087],
+            zoom: 19
+        }),
+    });
+    var mlayer = new ol.layer.Tile({
+        source: new ol.source.TileWMS({
+            url: 'http://map.landi.acmsmu.cn/geowebcache/service/wms',
+            params: {
+                'LAYERS': 'fzgl',
+                'FORMAT': 'image/png',
+                'SRS': 'EPSG:3857'
+            },
+            tileGrid: new ol.tilegrid.TileGrid({
+                resolutions: [156543.0339, 78271.51696, 39135.75848, 19567.87924, 9783.939621, 4891.96981, 2445.984905, 1222.992453, 611.496226, 305.748113, 152.874057, 76.437028, 38.218514, 19.109257, 9.554629, 4.777314, 2.388657, 1.194329, 0.597164, 0.298582],
+                origin: [-20037508.3427892, 20037508.3430388]
+            })
+        })
+    })
+
+    map.addLayer(mlayer);
+</script>
+
+</html>
